@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: talex
+    ports:
+      - "5432:5432"
+
+    
