@@ -6,7 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -41,9 +42,16 @@ public class User {
     private Role role;
 
     @CreationTimestamp
-    private LocalTime createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalTime updatedAt;
+    private LocalDateTime updatedAt;
+
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<UserSkillOffered> skillsOffered;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<UserSkillWanted> skillsWanted;
 
 }
