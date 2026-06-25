@@ -44,6 +44,7 @@ public class SecurityConfig {
                         auth-> auth
                                 .requestMatchers("/public/**").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .build();
     }

@@ -35,12 +35,11 @@ public class JwtService {
         claims.put("role", user.getRole());
 
 
-
         return Jwts.builder()
                 .subject(user.getUsername())
                 .claims(claims)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(getSecretKey())
                 .compact();
     }
@@ -50,14 +49,14 @@ public class JwtService {
         return Jwts.parser()
                 .verifyWith(getSecretKey())
                 .build()
-                .parseEncryptedClaims(token)
+                .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
 
     }
+
     public boolean validateToken(String token, UserDetails userDetails) {
         String username = extractUsernameFromToken(token);
-
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 

@@ -24,8 +24,8 @@ public class UserSkillOffered {
     @JoinColumn(name="skill_id", nullable = false)
     private Skill skill;
 
-    private Long ProficiencyLevel;
+    private Long proficiencyLevel;
 
-    private Long YearsExperience;
+    private Long yearsExperience;
 
 }

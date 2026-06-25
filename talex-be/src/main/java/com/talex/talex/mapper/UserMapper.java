@@ -1,13 +1,19 @@
 package com.talex.talex.mapper;
 
 
+import com.talex.talex.dto.req.AvailabilityPostRequest;
+import com.talex.talex.dto.req.OfferedSkillPostRequest;
 import com.talex.talex.dto.req.SignupRequest;
-import com.talex.talex.dto.res.LoginResponse;
-import com.talex.talex.dto.res.SignupResponse;
-import com.talex.talex.entity.User;
+import com.talex.talex.dto.req.WantedSkillPostRequest;
+import com.talex.talex.dto.res.*;
+import com.talex.talex.entity.*;
+import jakarta.validation.Valid;
+import org.hibernate.annotations.CreationTimestamp;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
@@ -20,4 +26,50 @@ public interface UserMapper {
     @Mapping(target = "token", source = "token")
     LoginResponse toLoginResponse(User user, String token);
 
+//    @Mapping()
+    MeResponse toMeResponse(User user);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "skill", source = "skill")
+    @Mapping(target = "proficiencyLevel", source = "request.proficiencyLevel")
+    @Mapping(target = "yearsExperience", source = "request.yearsExperience")
+    UserSkillOffered toUserSkillOffered(OfferedSkillPostRequest request, User user, Skill skill);
+
+    @Mapping(target = "id", source = "skillOffered.id")
+    @Mapping(target = "proficiencyLevel", source = "skillOffered.proficiencyLevel")
+    @Mapping(target = "yearsExperience", source = "skillOffered.yearsExperience")
+    @Mapping(target = "skillId", source = "skillOffered.skill.id")
+    @Mapping(target = "skillName", source = "skillOffered.skill.name")
+    OfferedSkillPostResponse toOfferedSkillPostResponse(UserSkillOffered skillOffered);
+
+    List<OfferedSkillPostResponse> toOfferedSkillPostResponseList(
+            List<UserSkillOffered> skillOfferedList
+    );
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "skill", source = "skill")
+    @Mapping(target = "priority", source = "request.priority")
+    UserSkillWanted toUserSkillWanted(WantedSkillPostRequest request, User user, Skill skill);
+
+    @Mapping(target = "id", source = "skillOffered.id")
+    @Mapping(target = "priority", source = "skillOffered.priority")
+    @Mapping(target = "skillId", source = "skillOffered.skill.id")
+    @Mapping(target = "skillName", source = "skillOffered.skill.name")
+    WantedSkillPostResponse toWantedSkillPostResponse(UserSkillWanted skillOffered);
+
+    List<WantedSkillPostResponse> toWantedSkillPostResponseList(
+            List<UserSkillOffered> skillOfferedList
+    );
+
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "dayOfWeek", source = "request.dayOfWeek")
+    @Mapping(target = "StartTime", source = "request.startTime")
+    @Mapping(target = "EndTime", source = "request.endTime")
+    Availability toAvailability(@Valid AvailabilityPostRequest request, User user);
+
+    AvailabilityPostResponse toAvailabilityPostResponse(Availability availability);
 }

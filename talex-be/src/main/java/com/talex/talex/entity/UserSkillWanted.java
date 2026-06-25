@@ -23,6 +23,6 @@ public class UserSkillWanted {
     @JoinColumn(name="skill_id", nullable = false)
     private Skill skill;
 
-    private Long Priority;
+    private Long priority;
 
 }
