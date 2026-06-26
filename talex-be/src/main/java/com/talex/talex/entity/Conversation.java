@@ -21,14 +21,13 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "match_id", nullable = false, unique = true)
+    private Match match;
+
     @CreationTimestamp
     private LocalTime createdAt;
 
-    @OneToMany(
-            mappedBy = "conversation",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private Set<ConversationParticipant> participants = new HashSet<>();
+
 
 }

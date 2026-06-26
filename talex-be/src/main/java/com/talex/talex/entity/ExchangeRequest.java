@@ -29,14 +29,16 @@ public class ExchangeRequest {
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "sender_Skill_id", nullable = false)
-    private Skill senderSkill;
+    @JoinColumn(name = "sender_Skill_offered_id", nullable = false)
+    private UserSkillOffered senderSkillOffered;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "receiver_Skill_id", nullable = false)
-    private Skill receiverSkill;
+    @JoinColumn(name = "receiver_Skill_offered_id", nullable = false)
+    private UserSkillOffered  receiverSkillOffered;
 
     private ExchangeRequestStatus status;
+
+    private String message;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

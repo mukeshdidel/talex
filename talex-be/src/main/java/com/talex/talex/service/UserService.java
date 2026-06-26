@@ -12,6 +12,7 @@ import com.talex.talex.entity.*;
 import com.talex.talex.mapper.UserMapper;
 import com.talex.talex.repo.*;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,9 +38,17 @@ public class UserService {
     public final UserMapper userMapper;
 
 
-    private User getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userRepo.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("user not found."));
+    }
+
+    public User getUserById(Long aLong) {
+        return userRepo.findById(aLong)
+                .orElseThrow(()-> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "User not found"
+                ));
     }
 
     public MeResponse getMe(String username) {
@@ -105,6 +114,8 @@ public class UserService {
         User user = getUserByUsername(username);
 
         Availability availability = userMapper.toAvailability(request, user);
+
+
         availability = availabilityRepo.save(availability);
 
         return userMapper.toAvailabilityPostResponse(availability);
@@ -113,5 +124,4 @@ public class UserService {
     public void deleteAvailability(String username, Long availabilityId) {
         availabilityRepo.deleteByIdAndUser_Username(availabilityId, username);
     }
-
 }

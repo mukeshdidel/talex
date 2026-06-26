@@ -14,6 +14,7 @@ public record MeResponse(
         String bio,
         String profilePicture,
         Set<OfferedSkillPostResponse> skillsOffered,
-        Set<WantedSkillPostResponse> skillsWanted
+        Set<WantedSkillPostResponse> skillsWanted,
+        Set<AvailabilityPostResponse> availabilities
 ) {
 }

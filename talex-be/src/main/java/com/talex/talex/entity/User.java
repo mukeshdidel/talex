@@ -39,6 +39,8 @@ public class User {
 
     private String profilePicture;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     @CreationTimestamp
@@ -54,5 +56,7 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<UserSkillWanted> skillsWanted;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<Availability> availabilities;
 
 }

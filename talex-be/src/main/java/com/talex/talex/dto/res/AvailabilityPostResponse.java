@@ -9,7 +9,7 @@ import java.time.LocalTime;
 public record AvailabilityPostResponse(
         Long id,
         Long dayOfWeek,
-        LocalTime StartTime,
-        LocalTime EndTime
+        LocalTime startTime,
+        LocalTime endTime
 ) {
 }

@@ -18,7 +18,7 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
-    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "id", ignore = true)
     User toUser(SignupRequest request);
 
     SignupResponse toSignupResponse(User user);
@@ -27,6 +27,9 @@ public interface UserMapper {
     LoginResponse toLoginResponse(User user, String token);
 
 //    @Mapping()
+    @Mapping(target = "skillsOffered", source = "user.skillsOffered")
+    @Mapping(target = "skillsWanted", source = "user.skillsWanted")
+    @Mapping(target = "availabilities", source = "user.availabilities")
     MeResponse toMeResponse(User user);
 
     @Mapping(target = "id", ignore = true)
@@ -67,9 +70,13 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", source = "user")
     @Mapping(target = "dayOfWeek", source = "request.dayOfWeek")
-    @Mapping(target = "StartTime", source = "request.startTime")
-    @Mapping(target = "EndTime", source = "request.endTime")
+    @Mapping(target = "startTime", source = "request.startTime")
+    @Mapping(target = "endTime", source = "request.endTime")
     Availability toAvailability(@Valid AvailabilityPostRequest request, User user);
 
+    @Mapping(target = "id", source = "availability.id")
+    @Mapping(target = "dayOfWeek", source = "availability.dayOfWeek")
+    @Mapping(target = "startTime", source = "availability.startTime")
+    @Mapping(target = "endTime", source = "availability.endTime")
     AvailabilityPostResponse toAvailabilityPostResponse(Availability availability);
 }

@@ -11,6 +11,7 @@ import java.time.LocalTime;
 @Builder
 @Setter
 @Getter
+@ToString
 public class Availability {
 
     @Id
@@ -23,8 +24,8 @@ public class Availability {
 
     private Long dayOfWeek;
 
-    private LocalTime StartTime;
+    private LocalTime startTime;
 
-    private LocalTime EndTime;
+    private LocalTime endTime;
 
 }

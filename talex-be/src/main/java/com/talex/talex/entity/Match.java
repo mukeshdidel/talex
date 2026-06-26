@@ -30,11 +30,11 @@ public class Match {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user1_Skill_id", nullable = false)
-    private Skill user1Skill;
+    private UserSkillOffered user1SkillOffered;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user2_Skill_id", nullable = false)
-    private Skill user2Skill;
+    private UserSkillOffered user2SkillOffered;
 
     private MatchStatus status;
 
