@@ -21,6 +21,7 @@ public class ExchangeRequestService {
     // service
     public final ConversationService conversationService;
     public final MatchService matchService;
+    public final NotificationService notificationService;
     public final SkillService skillService;
     public final UserService userService;
 
@@ -47,6 +48,12 @@ public class ExchangeRequestService {
         exchangeRequest.setReceiverSkillOffered(receiverSkillOffered);
 
         exchangeRequestRepo.save(exchangeRequest);
+
+        notificationService.notify(
+                receiver,
+                "New exchange request",
+                sender.getName() + " sent you a skill exchange request."
+        );
 
         return exchangeRequestMapper.toExchangeRequestPostResponse(exchangeRequest);
 
@@ -90,9 +97,11 @@ public class ExchangeRequestService {
         Match match = matchService.createMatch(request);
         conversationService.createConversation(match);
 
-        // todo: send mail, notification
-
-
+        notificationService.notify(
+                request.getSender(),
+                "Exchange request accepted",
+                request.getReceiver().getName() + " accepted your skill exchange request."
+        );
 
     }
 
@@ -113,5 +122,11 @@ public class ExchangeRequestService {
 
         request.setStatus(ExchangeRequestStatus.REJECTED);
         exchangeRequestRepo.save(request);
+
+        notificationService.notify(
+                request.getSender(),
+                "Exchange request rejected",
+                request.getReceiver().getName() + " rejected your skill exchange request."
+        );
     }
 }

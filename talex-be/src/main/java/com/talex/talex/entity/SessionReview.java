@@ -39,6 +39,7 @@ public class SessionReview {
     @Column(nullable = false)
     private Integer rating;
 
+    @Column(length = 1000)
     private String comment;
 
     @CreationTimestamp

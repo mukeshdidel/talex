@@ -23,6 +23,7 @@ public class SessionService {
 
     public final UserService userService;
     public final MatchRepo matchRepo;
+    public final NotificationService notificationService;
     public final SessionRepo sessionRepo;
     public final SessionMapper sessionMapper;
 
@@ -41,6 +42,13 @@ public class SessionService {
                 .build();
 
         session = sessionRepo.save(session);
+
+        User otherUser = getOtherParticipant(match, currentUser);
+        notificationService.notify(
+                otherUser,
+                "Session booked",
+                currentUser.getName() + " booked a session with you."
+        );
 
         return sessionMapper.toSessionResponse(session, currentUser);
     }
@@ -74,6 +82,13 @@ public class SessionService {
         session.setStatus(SessionStatus.cancelled);
         session = sessionRepo.save(session);
 
+        User otherUser = getOtherParticipant(session.getMatch(), currentUser);
+        notificationService.notify(
+                otherUser,
+                "Session cancelled",
+                currentUser.getName() + " cancelled your session."
+        );
+
         return sessionMapper.toSessionResponse(session, currentUser);
     }
 
@@ -99,5 +114,13 @@ public class SessionService {
                     "You are not allowed to access this match"
             );
         }
+    }
+
+    private User getOtherParticipant(Match match, User currentUser) {
+        if (match.getUser1().getId().equals(currentUser.getId())) {
+            return match.getUser2();
+        }
+
+        return match.getUser1();
     }
 }

@@ -26,6 +26,7 @@ public class ConversationService {
     private final ConversationRepo conversationRepo;
     private final MessageRepo messageRepo;
     private final UserService userService;
+    private final NotificationService notificationService;
     private final ConversationMapper conversationMapper;
 
     @Transactional
@@ -68,6 +69,13 @@ public class ConversationService {
 
         message = messageRepo.save(message);
 
+        User receiver = getOtherParticipant(conversation.getMatch(), currentUser);
+        notificationService.notify(
+                receiver,
+                "New message",
+                currentUser.getName() + " sent you a message."
+        );
+
         return conversationMapper.toMessageResponse(message);
     }
 
@@ -89,6 +97,14 @@ public class ConversationService {
         }
 
         return conversation;
+    }
+
+    private User getOtherParticipant(Match match, User currentUser) {
+        if (match.getUser1().getId().equals(currentUser.getId())) {
+            return match.getUser2();
+        }
+
+        return match.getUser1();
     }
 
 }
