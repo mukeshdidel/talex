@@ -27,7 +27,7 @@ public class Message {
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String text;
 
     @CreationTimestamp

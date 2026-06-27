@@ -1,6 +1,7 @@
 package com.talex.talex.service;
 
 
+import com.talex.talex.dto.res.MatchResponse;
 import com.talex.talex.dto.res.MatchSuggestResponse;
 import com.talex.talex.entity.ExchangeRequest;
 import com.talex.talex.entity.Match;
@@ -51,5 +52,14 @@ public class MatchService {
 
         return matchRepo.save(match);
 
+    }
+
+    public List<MatchResponse> getMatches(String username) {
+
+        User user = userService.getUserByUsername(username);
+
+        List<Match> matches = matchRepo.findMatchesByUserId(user.getId());
+
+        return matchMapper.toMatchResponseList(matches, user);
     }
 }

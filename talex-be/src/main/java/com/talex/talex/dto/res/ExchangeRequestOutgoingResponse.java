@@ -8,7 +8,7 @@ public record ExchangeRequestOutgoingResponse(
         String receiverUsername,
         String receiverName,
         OfferedSkillPostResponse senderSkillOffered,
-        WantedSkillPostResponse receiverSkillOffered,
+        OfferedSkillPostResponse receiverSkillOffered,
         String message,
         ExchangeRequestStatus status
 ) {

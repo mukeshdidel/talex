@@ -1,5 +1,6 @@
 package com.talex.talex.controller;
 
+import com.talex.talex.dto.res.MatchResponse;
 import com.talex.talex.dto.res.MatchSuggestResponse;
 import com.talex.talex.service.MatchService;
 import com.talex.talex.service.UserService;
@@ -27,5 +28,13 @@ public class MatchController {
         String username = principal.getName();
 
         return ResponseEntity.ok().body(matchService.getMatchSuggestion(username));
+    }
+
+
+    @GetMapping
+    public ResponseEntity<List<MatchResponse>> getMatches(Principal principal) {
+        String username = principal.getName();
+
+        return ResponseEntity.ok().body(matchService.getMatches(username));
     }
 }
