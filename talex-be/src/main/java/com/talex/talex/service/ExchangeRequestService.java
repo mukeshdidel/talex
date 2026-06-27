@@ -8,10 +8,11 @@ import com.talex.talex.entity.*;
 import com.talex.talex.mapper.ExchangeRequestMapper;
 import com.talex.talex.repo.ExchangeRequestRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -42,12 +43,12 @@ public class ExchangeRequestService {
             throw new IllegalArgumentException("You cannot send an exchange request to yourself.");
         }
 
-        if (exchangeRequestRepo.existsBySender_IdAndReceiver_IdAndStatus(
+        if (exchangeRequestRepo.existsPendingBetweenUsers(
                 sender.getId(),
                 receiver.getId(),
                 ExchangeRequestStatus.PENDING
         )) {
-            throw new IllegalStateException("You already have a pending exchange request for this user.");
+            throw new IllegalStateException("A pending exchange request already exists between these users.");
         }
 
         UserSkillOffered senderSkillOffered = skillService.getSkillOfferedForUser(
@@ -95,13 +96,19 @@ public class ExchangeRequestService {
 
 
     @Transactional
-    public void acceptExchangeRequest(String username, Long requestId) throws AccessDeniedException {
+    public void acceptExchangeRequest(String username, Long requestId) {
         User user = userService.getUserByUsername(username);
         ExchangeRequest request = exchangeRequestRepo.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Exchange request not found"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Exchange request not found"
+                ));
 
         if (!request.getReceiver().getId().equals(user.getId())) {
-            throw new AccessDeniedException("You are not allowed to accept this request.");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed to accept this request."
+            );
         }
 
         // Only pending requests can be accepted
@@ -124,14 +131,20 @@ public class ExchangeRequestService {
 
     }
 
-    public void rejectExchangeRequest(String username, Long requestId) throws AccessDeniedException {
+    public void rejectExchangeRequest(String username, Long requestId) {
 
         User user = userService.getUserByUsername(username);
         ExchangeRequest request = exchangeRequestRepo.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Exchange request not found"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Exchange request not found"
+                ));
 
         if (!request.getReceiver().getId().equals(user.getId())) {
-            throw new AccessDeniedException("You are not allowed to reject this request.");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed to reject this request."
+            );
         }
 
         // Only pending requests can be rejected

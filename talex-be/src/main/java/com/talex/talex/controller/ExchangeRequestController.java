@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.List;
 
@@ -41,14 +40,14 @@ public class ExchangeRequestController {
     }
 
     @PutMapping("/{id}/accept")
-    public ResponseEntity<Void> acceptExchangeRequest(Principal principal, @PathVariable("id") Long requestId) throws AccessDeniedException {
+    public ResponseEntity<Void> acceptExchangeRequest(Principal principal, @PathVariable("id") Long requestId) {
         String username = principal.getName();
         exchangeRequestService.acceptExchangeRequest(username, requestId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/reject")
-    public ResponseEntity<Void> rejectExchangeRequest(Principal principal, @PathVariable("id") Long requestId) throws AccessDeniedException {
+    public ResponseEntity<Void> rejectExchangeRequest(Principal principal, @PathVariable("id") Long requestId) {
         String username = principal.getName();
         exchangeRequestService.rejectExchangeRequest(username, requestId);
         return ResponseEntity.noContent().build();
