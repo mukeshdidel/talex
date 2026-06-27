@@ -32,6 +32,14 @@ public interface UserMapper {
     @Mapping(target = "availabilities", source = "user.availabilities")
     MeResponse toMeResponse(User user);
 
+    @Mapping(target = "userId", source = "id")
+    @Mapping(target = "skillsOffered", source = "skillsOffered")
+    @Mapping(target = "skillsWanted", source = "skillsWanted")
+    @Mapping(target = "availabilities", source = "availabilities")
+    UserSearchResponse toUserSearchResponse(User user);
+
+    List<UserSearchResponse> toUserSearchResponseList(List<User> users);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", source = "user")
     @Mapping(target = "skill", source = "skill")
@@ -63,7 +71,7 @@ public interface UserMapper {
     WantedSkillPostResponse toWantedSkillPostResponse(UserSkillWanted skillOffered);
 
     List<WantedSkillPostResponse> toWantedSkillPostResponseList(
-            List<UserSkillOffered> skillOfferedList
+            List<UserSkillWanted> skillWantedList
     );
 
 

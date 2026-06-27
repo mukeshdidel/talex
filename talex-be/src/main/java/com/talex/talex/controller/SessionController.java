@@ -33,11 +33,27 @@ public class SessionController {
         return ResponseEntity.ok(sessionService.getSessions(principal.getName()));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<SessionResponse> getSession(
+            Principal principal,
+            @PathVariable("id") Long sessionId
+    ) {
+        return ResponseEntity.ok(sessionService.getSession(principal.getName(), sessionId));
+    }
+
     @PutMapping("/{id}/cancel")
     public ResponseEntity<SessionResponse> cancelSession(
             Principal principal,
             @PathVariable("id") Long sessionId
     ) {
         return ResponseEntity.ok(sessionService.cancelSession(principal.getName(), sessionId));
+    }
+
+    @PutMapping("/{id}/complete")
+    public ResponseEntity<SessionResponse> completeSession(
+            Principal principal,
+            @PathVariable("id") Long sessionId
+    ) {
+        return ResponseEntity.ok(sessionService.completeSession(principal.getName(), sessionId));
     }
 }

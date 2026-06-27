@@ -7,6 +7,7 @@ import com.talex.talex.dto.req.WantedSkillPostRequest;
 import com.talex.talex.dto.res.AvailabilityPostResponse;
 import com.talex.talex.dto.res.MeResponse;
 import com.talex.talex.dto.res.OfferedSkillPostResponse;
+import com.talex.talex.dto.res.UserSearchResponse;
 import com.talex.talex.dto.res.WantedSkillPostResponse;
 import com.talex.talex.entity.*;
 import com.talex.talex.mapper.UserMapper;
@@ -55,6 +56,26 @@ public class UserService {
         User user = getUserByUsername(username);
         return userMapper.toMeResponse(user);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserSearchResponse> searchUsers(
+            String currentUsername,
+            String skill,
+            String category,
+            Long availability,
+            String username
+    ) {
+        User currentUser = getUserByUsername(currentUsername);
+        List<User> users = userRepo.searchUsers(
+                currentUser.getId(),
+                normalizeSearchParam(skill),
+                normalizeSearchParam(category),
+                availability,
+                normalizeSearchParam(username)
+        );
+
+        return userMapper.toUserSearchResponseList(users);
     }
 
     public MeResponse putMe(String username, MePutRequest request) {
@@ -123,5 +144,13 @@ public class UserService {
 
     public void deleteAvailability(String username, Long availabilityId) {
         availabilityRepo.deleteByIdAndUser_Username(availabilityId, username);
+    }
+
+    private String normalizeSearchParam(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        return value.trim();
     }
 }

@@ -61,21 +61,30 @@ public class SessionService {
         return sessionMapper.toSessionResponseList(sessions, currentUser);
     }
 
+    @Transactional(readOnly = true)
+    public SessionResponse getSession(String username, Long sessionId) {
+        User currentUser = userService.getUserByUsername(username);
+        Session session = getSessionForUser(sessionId, currentUser);
+
+        return sessionMapper.toSessionResponse(session, currentUser);
+    }
+
     @Transactional
     public SessionResponse cancelSession(String username, Long sessionId) {
         User currentUser = userService.getUserByUsername(username);
-        Session session = sessionRepo.findById(sessionId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Session not found"
-                ));
-
-        validateMatchParticipant(session.getMatch(), currentUser);
+        Session session = getSessionForUser(sessionId, currentUser);
 
         if (session.getStatus() == SessionStatus.cancelled) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Session is already cancelled"
+            );
+        }
+
+        if (session.getStatus() == SessionStatus.completed) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Completed sessions cannot be cancelled"
             );
         }
 
@@ -90,6 +99,50 @@ public class SessionService {
         );
 
         return sessionMapper.toSessionResponse(session, currentUser);
+    }
+
+    @Transactional
+    public SessionResponse completeSession(String username, Long sessionId) {
+        User currentUser = userService.getUserByUsername(username);
+        Session session = getSessionForUser(sessionId, currentUser);
+
+        if (session.getStatus() == SessionStatus.completed) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Session is already completed"
+            );
+        }
+
+        if (session.getStatus() == SessionStatus.cancelled) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Cancelled sessions cannot be completed"
+            );
+        }
+
+        session.setStatus(SessionStatus.completed);
+        session = sessionRepo.save(session);
+
+        User otherUser = getOtherParticipant(session.getMatch(), currentUser);
+        notificationService.notify(
+                otherUser,
+                "Session completed",
+                currentUser.getName() + " marked your session as completed."
+        );
+
+        return sessionMapper.toSessionResponse(session, currentUser);
+    }
+
+    private Session getSessionForUser(Long sessionId, User currentUser) {
+        Session session = sessionRepo.findById(sessionId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Session not found"
+                ));
+
+        validateMatchParticipant(session.getMatch(), currentUser);
+
+        return session;
     }
 
     private Match getMatchForUser(Long matchId, User currentUser) {

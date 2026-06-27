@@ -37,8 +37,27 @@ public class ExchangeRequestService {
 
         User sender = userService.getUserByUsername(username);
         User receiver = userService.getUserById(request.receiverId());
-        UserSkillOffered senderSkillOffered = skillService.getSkillOffered(request.senderSkillOfferId());
-        UserSkillOffered receiverSkillOffered = skillService.getSkillOffered(request.receiverSkillOfferId());
+
+        if (sender.getId().equals(receiver.getId())) {
+            throw new IllegalArgumentException("You cannot send an exchange request to yourself.");
+        }
+
+        if (exchangeRequestRepo.existsBySender_IdAndReceiver_IdAndStatus(
+                sender.getId(),
+                receiver.getId(),
+                ExchangeRequestStatus.PENDING
+        )) {
+            throw new IllegalStateException("You already have a pending exchange request for this user.");
+        }
+
+        UserSkillOffered senderSkillOffered = skillService.getSkillOfferedForUser(
+                request.senderSkillOfferId(),
+                sender
+        );
+        UserSkillOffered receiverSkillOffered = skillService.getSkillOfferedForUser(
+                request.receiverSkillOfferId(),
+                receiver
+        );
 
         ExchangeRequest exchangeRequest = exchangeRequestMapper.toExchangeRequest(request);
 

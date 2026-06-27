@@ -43,4 +43,40 @@ AND EXISTS (
 """)
     List<User> findMatchSuggestions(Long userId);
 
+    @Query("""
+SELECT DISTINCT u
+FROM User u
+LEFT JOIN FETCH u.skillsOffered uso
+LEFT JOIN FETCH uso.skill
+LEFT JOIN FETCH u.skillsWanted usw
+LEFT JOIN FETCH usw.skill
+LEFT JOIN FETCH u.availabilities a
+WHERE u.id <> :currentUserId
+AND (
+    :skill IS NULL OR
+    LOWER(uso.skill.name) LIKE LOWER(CONCAT('%', :skill, '%')) OR
+    LOWER(usw.skill.name) LIKE LOWER(CONCAT('%', :skill, '%'))
+)
+AND (
+    :category IS NULL OR
+    LOWER(uso.skill.category) LIKE LOWER(CONCAT('%', :category, '%')) OR
+    LOWER(usw.skill.category) LIKE LOWER(CONCAT('%', :category, '%'))
+)
+AND (
+    :availability IS NULL OR
+    a.dayOfWeek = :availability
+)
+AND (
+    :username IS NULL OR
+    LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))
+)
+""")
+    List<User> searchUsers(
+            Long currentUserId,
+            String skill,
+            String category,
+            Long availability,
+            String username
+    );
+
 }

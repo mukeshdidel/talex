@@ -36,8 +36,11 @@ public class ExchangeRequest {
     @JoinColumn(name = "receiver_Skill_offered_id", nullable = false)
     private UserSkillOffered  receiverSkillOffered;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ExchangeRequestStatus status;
 
+    @Column(length = 1000)
     private String message;
 
     @CreationTimestamp

@@ -2,6 +2,7 @@ package com.talex.talex.service;
 
 
 import com.talex.talex.entity.Skill;
+import com.talex.talex.entity.User;
 import com.talex.talex.entity.UserSkillOffered;
 import com.talex.talex.repo.SkillRepo;
 import com.talex.talex.repo.UserSkillOfferedRepo;
@@ -36,6 +37,14 @@ public class SkillService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Skill not found"
+                ));
+    }
+
+    public UserSkillOffered getSkillOfferedForUser(Long skillOfferedId, User user) {
+        return userSkillOfferedRepo.findByIdAndUser_Id(skillOfferedId, user.getId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Offered skill does not belong to the expected user"
                 ));
     }
 }

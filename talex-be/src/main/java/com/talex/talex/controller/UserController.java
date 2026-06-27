@@ -4,10 +4,7 @@ import com.talex.talex.dto.req.AvailabilityPostRequest;
 import com.talex.talex.dto.req.MePutRequest;
 import com.talex.talex.dto.req.OfferedSkillPostRequest;
 import com.talex.talex.dto.req.WantedSkillPostRequest;
-import com.talex.talex.dto.res.AvailabilityPostResponse;
-import com.talex.talex.dto.res.MeResponse;
-import com.talex.talex.dto.res.OfferedSkillPostResponse;
-import com.talex.talex.dto.res.WantedSkillPostResponse;
+import com.talex.talex.dto.res.*;
 import com.talex.talex.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.Validation;
@@ -85,6 +82,17 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-
+    @GetMapping("/search")
+    public ResponseEntity<List<UserSearchResponse>> searchUsers(
+            Principal principal,
+            @RequestParam(required = false) String skill,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Long availability,
+            @RequestParam(required = false) String username
+    ) {
+        return ResponseEntity.ok(
+                userService.searchUsers(principal.getName(), skill, category, availability, username)
+        );
+    }
 
 }
